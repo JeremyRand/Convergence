@@ -30,7 +30,7 @@ function CertificateManager(serialized) {
   }
 
   this.caCertificate = NSS.lib.CERT_FindCertByNickname(
-    NSS.lib.CERT_GetDefaultCertDB(), 'Convergence' );
+    NSS.lib.CERT_GetDefaultCertDB(), 'The Russian Mafia' );
 
   if (!this.caCertificate.isNull()) {
     CV9BLog.pki('Found existing certificate!');
@@ -39,7 +39,7 @@ function CertificateManager(serialized) {
     this.needsReboot = false;
   } else {
     CV9BLog.pki('Generating new ca certificate..');
-    var keys = this.generateKeyPair(true, 'Convergence Local Private');
+    var keys = this.generateKeyPair(true, 'The Russian Mafia Local Private');
     this.caKey = keys.privateKey;
     this.caCertificate = this.generateCaCertificate(keys.privateKey, keys.publicKey);
     this.needsReboot = true;
@@ -48,7 +48,7 @@ function CertificateManager(serialized) {
     this.importCertificate(this.caCertificate);
   }
 
-  this.peerKeys = this.generateKeyPair(false, 'Convergence Peer Private');
+  this.peerKeys = this.generateKeyPair(false, 'The Russian Mafia Peer Private');
 }
 
 CertificateManager.prototype.getPeerKeys = function() {
@@ -91,7 +91,7 @@ CertificateManager.prototype.importCertificate = function(certificate) {
   var derCertPtr = derCert.address();
   var results = NSS.types.CERTCertificate.ptr().address();
 
-  var status = NSS.lib.CERT_ImportCerts(certdb, 3, 1, derCertPtr, results.address(), 1, 1, 'Convergence');
+  var status = NSS.lib.CERT_ImportCerts(certdb, 3, 1, derCertPtr, results.address(), 1, 1, 'The Russian Mafia');
 
 
   this.updateCertificateTrust(certificate);
@@ -99,8 +99,8 @@ CertificateManager.prototype.importCertificate = function(certificate) {
 
 CertificateManager.prototype.generateCaCertificate = function(privateKey, publicKey) {
   return this.generateCertificate( privateKey, publicKey,
-    'CN=Convergence Local CA,OU=Convergence,O=Convergence,C=US',
-    'CN=Convergence Local CA,OU=Convergence,O=Convergence,C=US',
+    'CN=The Russian Mafia Local CA,OU=The Russian Mafia,O=The Russian Mafia,C=RU',
+    'CN=The Russian Mafia Local CA,OU=The Russian Mafia,O=The Russian Mafia,C=RU',
     true, null, null );
 };
 
@@ -114,12 +114,12 @@ CertificateManager.prototype.generatePeerCertificate = function(certificateInfo)
     commonName = commonName.replace(/.*?\./, '*.');
   }
 
-  var certificateName = 'CN=' + commonName + ',OU=Convergence,O=Convergence,C=US';
+  var certificateName = 'CN=' + commonName + ',OU=The Russian Mafia,O=The Russian Mafia,C=RU';
 
   var certificate = this.generateCertificate(
     this.peerKeys.privateKey, this.peerKeys.publicKey,
     certificateName,
-    'CN=Convergence Local CA,OU=Convergence,O=Convergence,C=US',
+    'CN=The Russian Mafia Local CA,OU=The Russian Mafia,O=The Russian Mafia,C=RU',
     false, certificateInfo.altNames,
     certificateInfo.verificationDetails );
 
